@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>TEADY | Login</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="login-wrapper">
+    <div class="logo">
+      <img src="{{ url_for('static', filename='teddy.png') }}" alt="Teady Logo" class="logo-img">
+      <h1>TEADY</h1>
+    </div>
+
+    <form class="login-form" method="POST" action="{{ url_for('login') }}">
+      <h2>Sign In</h2>
+
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <div class="flash">
+            {% for message in messages %}<p>{{ message }}</p>{% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      <label for="email">Email ID</label>
+      <input type="email" id="email" name="email" placeholder="teadyuser001@gmail.com" required>
+
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" placeholder="••••••••" required>
+
+      <button type="submit">Login</button>
+    </form>
+
+    <p class="footer-note">Use one of the 50 test accounts from credentials.txt</p>
+  </div>
+</body>
+</html>
