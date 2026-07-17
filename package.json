@@ -1,0 +1,15 @@
+{
+  "name": "teady-login-dashboard",
+  "version": "1.0.0",
+  "description": "Live login activity dashboard reading directly from database.db (users + login_history)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "better-sqlite3": "^12.11.1",
+    "chart.js": "^4.5.1",
+    "express": "^5.2.1"
+  }
+}

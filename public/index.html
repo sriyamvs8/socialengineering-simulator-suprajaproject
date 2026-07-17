@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login Activity — Teady</title>
+<script src="/js/chart.umd.js"></script>
+<style>
+  :root{
+    --bg: #0B0F14;
+    --panel: #121822;
+    --panel-border: #1E2733;
+    --text: #E7ECF2;
+    --text-dim: #7C8797;
+    --accent: #45D9C7;
+    --accent-dim: #1F5F58;
+    --amber: #F2B84B;
+    --red: #E5566E;
+    --mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    padding: 28px 32px 60px;
+  }
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom: 28px; flex-wrap: wrap; gap:12px;
+  }
+  .title-block h1{
+    font-size: 22px; font-weight: 700; letter-spacing: -0.02em;
+  }
+  .title-block .sub{
+    color: var(--text-dim); font-size: 13px; margin-top: 4px; font-family: var(--mono);
+  }
+  .live-badge{
+    display:flex; align-items:center; gap:8px;
+    background: var(--panel); border:1px solid var(--panel-border);
+    padding: 8px 14px; border-radius: 999px; font-family: var(--mono); font-size: 12px;
+    color: var(--accent);
+  }
+  .pulse-dot{
+    width:8px; height:8px; border-radius:50%; background: var(--accent);
+    box-shadow: 0 0 0 0 rgba(69,217,199,0.6);
+    animation: pulse 1.8s infinite;
+  }
+  @keyframes pulse{
+    0%{ box-shadow: 0 0 0 0 rgba(69,217,199,0.55);}
+    70%{ box-shadow: 0 0 0 9px rgba(69,217,199,0);}
+    100%{ box-shadow: 0 0 0 0 rgba(69,217,199,0);}
+  }
+  .kpi-row{
+    display:grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr));
+    gap: 14px; margin-bottom: 22px;
+  }
+  .kpi{
+    background: var(--panel); border:1px solid var(--panel-border); border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .kpi .label{ color:var(--text-dim); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
+  .kpi .value{ font-family: var(--mono); font-size: 28px; font-weight: 700; margin-top: 6px; }
+  .kpi .value.accent{ color: var(--accent); }
+  .kpi .value.amber{ color: var(--amber); }
+
+  .grid{
+    display:grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px;
+  }
+  .grid.thirds{ grid-template-columns: 1fr 1fr 1fr; }
+  @media (max-width: 900px){
+    .grid, .grid.thirds{ grid-template-columns: 1fr; }
+  }
+  .panel{
+    background: var(--panel); border:1px solid var(--panel-border); border-radius: 10px;
+    padding: 18px 20px;
+  }
+  .panel h2{
+    font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-dim);
+    margin-bottom: 14px; font-weight: 600;
+  }
+  canvas{ max-height: 260px; }
+
+  table{ width:100%; border-collapse: collapse; font-family: var(--mono); font-size: 13px; }
+  th{ text-align:left; color: var(--text-dim); font-weight: 600; padding: 6px 8px; border-bottom: 1px solid var(--panel-border); }
+  td{ padding: 8px; border-bottom: 1px solid #161C26; }
+  tr.new-row{ animation: rowIn 1.4s ease-out; }
+  @keyframes rowIn{
+    0%{ background: rgba(69,217,199,0.18); }
+    100%{ background: transparent; }
+  }
+  .feed-wrap{ max-height: 320px; overflow-y:auto; }
+  .status-line{
+    font-family: var(--mono); font-size: 11px; color: var(--text-dim); margin-top: 18px; text-align:right;
+  }
+  .error-banner{
+    display:none; background:#2A1218; border:1px solid var(--red); color: var(--red);
+    padding: 10px 16px; border-radius:8px; font-family: var(--mono); font-size: 12px; margin-bottom: 16px;
+  }
+  /* ===== Project Information ===== */
+
+.pi-section{
+    margin-top:35px;
+}
+
+.pi-btn{
+    background:var(--accent);
+    color:#0B0F14;
+    border:none;
+    padding:12px 22px;
+    font-size:15px;
+    font-weight:700;
+    border-radius:8px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.pi-btn:hover{
+    background:#34c8b6;
+}
+
+.pi-panel{
+    display:none;
+    margin-top:20px;
+    background:var(--panel);
+    border:1px solid var(--panel-border);
+    border-radius:10px;
+    padding:25px;
+}
+
+.pi-panel h1,
+.pi-panel h2{
+    color:var(--accent);
+    margin-bottom:12px;
+}
+
+.pi-panel p{
+    color:var(--text);
+    line-height:1.8;
+    margin-bottom:18px;
+}
+
+.pi-panel table{
+    width:100%;
+    border-collapse:collapse;
+    margin-bottom:25px;
+}
+
+.pi-panel th{
+    background:#1d2633;
+    color:var(--accent);
+    padding:12px;
+    border:1px solid var(--panel-border);
+}
+
+.pi-panel td{
+    padding:12px;
+    border:1px solid var(--panel-border);
+}
+
+.pi-panel tr:nth-child(even){
+    background:#171d27;
+}
+</style>
+</head>
+<body>
+
+<div id="errorBanner" class="error-banner"></div>
+
+<header>
+  <div class="title-block">
+    <h1>Login Activity</h1>
+    <div class="sub">teady_login / database.db → login_history</div>
+  </div>
+  <div class="live-badge"><span class="pulse-dot"></span><span id="liveLabel">LIVE</span></div>
+</header>
+
+<div class="kpi-row">
+  <div class="kpi"><div class="label">Registered Users</div><div class="value" id="kpiUsers">—</div></div>
+  <div class="kpi"><div class="label">Total Logins (all-time)</div><div class="value accent" id="kpiLogins">—</div></div>
+  <div class="kpi"><div class="label">Avg Logins / User</div><div class="value" id="kpiAvg">—</div></div>
+  <div class="kpi"><div class="label">New vs Returning</div><div class="value amber" id="kpiRatio">—</div></div>
+</div>
+
+<div class="grid">
+  <div class="panel">
+    <h2>Logins per day</h2>
+    <canvas id="trendChart"></canvas>
+  </div>
+  <div class="panel">
+    <h2>New vs Returning</h2>
+    <canvas id="ratioChart"></canvas>
+  </div>
+</div>
+
+<div class="grid thirds">
+  <div class="panel">
+    <h2>Activity by hour of day</h2>
+    <canvas id="hourChart"></canvas>
+  </div>
+  <div class="panel">
+    <h2>Activity by day of week</h2>
+    <canvas id="dowChart"></canvas>
+  </div>
+  <div class="panel">
+    <h2>Top 10 most active users</h2>
+    <canvas id="topUsersChart"></canvas>
+  </div>
+</div>
+
+<div class="panel">
+  <h2>Recent logins (live feed)</h2>
+  <div class="feed-wrap">
+    <table>
+      <thead><tr><th>Email</th><th>Login time</th><th>#</th></tr></thead>
+      <tbody id="recentBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="status-line" id="statusLine">connecting…</div>
+
+<div class="pi-section">
+
+<center>
+
+<button class="pi-btn" onclick="togglePIPanel()">
+
+📄 Project Information
+
+</button>
+
+</center>
+
+<div id="piPanel" class="pi-panel">
+
+<h1>Project Information</h1>
+
+<p>
+
+This project was developed by
+
+<b>
+
+M. Vaishnavi,
+
+Mylavarapu Venkata Sriya,
+
+Shravani Janumala,
+
+Pawar Bhavani,
+
+Avula Sahithi
+
+</b>
+
+as part of a
+
+<b>Cyber Security Internship.</b>
+
+This project is designed to secure organizations from cyber frauds using phishing simulation.
+
+</p>
+
+<h2>Project Details</h2>
+
+<table>
+
+<tr>
+
+<td><b>Project Name</b></td>
+
+<td>Social Engineering Simulator</td>
+
+</tr>
+
+<tr>
+
+<td><b>Description</b></td>
+
+<td>Implementing Secured Flask Phishing Simulation Campaign For Training Demonstrations.</td>
+
+</tr>
+
+<tr>
+
+<td><b>Start Date</b></td>
+
+<td>07-June-2026</td>
+
+</tr>
+
+<tr>
+
+<td><b>End Date</b></td>
+
+<td>18-July-2026</td>
+
+</tr>
+
+<tr>
+
+<td><b>Status</b></td>
+
+<td style="color:#45D9C7;font-weight:bold;">
+
+Completed
+
+</td>
+
+</tr>
+
+</table>
+
+<h2>Developer Details — Team 16</h2>
+
+<table>
+
+<tr>
+
+<th>Name</th>
+
+<th>Employee ID</th>
+
+<th>Email</th>
+
+</tr>
+
+<tr>
+
+<td>M. Vaishnavi</td>
+
+<td>ST#IS#9409</td>
+
+<td>mvaishnavi_it231231@mgit.ac.in</td>
+
+</tr>
+
+<tr>
+
+<td>Mylavarapu Venkata Sriya</td>
+
+<td>ST#IS#9410</td>
+
+<td>mvenkatasriya_it231247@mgit.ac.in</td>
+
+</tr>
+
+<tr>
+
+<td>Shravani Janumala</td>
+
+<td>ST#IS#9412</td>
+
+<td>shravanijanumala@gmail.com</td>
+
+</tr>
+
+<tr>
+
+<td>Pawar Bhavani</td>
+
+<td>ST#IS#9415</td>
+
+<td>pbhavani_it231253@mgit.ac.in</td>
+
+</tr>
+
+<tr>
+
+<td>Avula Sahithi</td>
+
+<td>ST#IS#9418</td>
+
+<td>asahithi_it231206@mgit.ac.in</td>
+
+</tr>
+
+</table>
+
+<h2>Company Details</h2>
+
+<table>
+
+<tr>
+
+<th>Company</th>
+
+<th>Details</th>
+
+</tr>
+
+<tr>
+
+<td>Name</td>
+
+<td>Supraja Technologies</td>
+
+</tr>
+
+<tr>
+
+<td>Email</td>
+
+<td>contact@suprajatechnologies.com</td>
+
+</tr>
+
+</table>
+
+</div>
+
+</div>
+
+<script>
+const REFRESH_MS = 4000; // polling interval — SQLite has no native push events,
+                          // so we poll a cheap heartbeat and only re-fetch full
+                          // stats when something actually changed.
+let lastFingerprint = null;
+let charts = {};
+let knownIds = new Set();
+
+function fmtTime(iso){
+  try {
+    const d = new Date(iso.replace(' ', 'T'));
+    if (isNaN(d.getTime())) return iso;
+    return d.toLocaleString();
+  } catch(e){ return iso; }
+}
+
+function makeChart(ctx, type, data, options){
+  return new Chart(ctx, { type, data, options: Object.assign({
+    responsive:true,
+    maintainAspectRatio:false,
+    plugins:{ legend:{ display:false, labels:{ color:'#7C8797' } } },
+    scales: type === 'doughnut' ? {} : {
+      x:{ ticks:{ color:'#7C8797', font:{ family:'JetBrains Mono', size:10 } }, grid:{ color:'#161C26' } },
+      y:{ ticks:{ color:'#7C8797', font:{ family:'JetBrains Mono', size:10 } }, grid:{ color:'#161C26' }, beginAtZero:true }
+    }
+  }, options || {}) });
+}
+
+function initCharts(stats){
+  charts.trend = makeChart(document.getElementById('trendChart'), 'line', {
+    labels: stats.loginsPerDay.map(r => r.day),
+    datasets: [{ data: stats.loginsPerDay.map(r => r.count), borderColor:'#45D9C7', backgroundColor:'rgba(69,217,199,0.12)', fill:true, tension:0.3, pointRadius:2 }]
+  });
+
+  charts.ratio = makeChart(document.getElementById('ratioChart'), 'doughnut', {
+    labels: ['New', 'Returning'],
+    datasets: [{ data: [stats.newLogins, stats.returningLogins], backgroundColor: ['#F2B84B', '#45D9C7'], borderWidth:0 }]
+  }, { plugins:{ legend:{ display:true, position:'bottom', labels:{ color:'#7C8797', font:{ family:'JetBrains Mono', size:11 } } } } });
+
+  charts.hour = makeChart(document.getElementById('hourChart'), 'bar', {
+    labels: stats.byHour.map(r => r.hour + 'h'),
+    datasets: [{ data: stats.byHour.map(r => r.count), backgroundColor:'#1F5F58' }]
+  });
+
+  charts.dow = makeChart(document.getElementById('dowChart'), 'bar', {
+    labels: stats.byDayOfWeek.map(r => r.day),
+    datasets: [{ data: stats.byDayOfWeek.map(r => r.count), backgroundColor:'#45D9C7' }]
+  });
+
+  charts.topUsers = makeChart(document.getElementById('topUsersChart'), 'bar', {
+    labels: stats.topUsers.map(r => r.email.split('@')[0]),
+    datasets: [{ data: stats.topUsers.map(r => r.count), backgroundColor:'#F2B84B' }]
+  }, { indexAxis:'y' });
+}
+
+function updateCharts(stats){
+  charts.trend.data.labels = stats.loginsPerDay.map(r => r.day);
+  charts.trend.data.datasets[0].data = stats.loginsPerDay.map(r => r.count);
+  charts.trend.update();
+
+  charts.ratio.data.datasets[0].data = [stats.newLogins, stats.returningLogins];
+  charts.ratio.update();
+
+  charts.hour.data.datasets[0].data = stats.byHour.map(r => r.count);
+  charts.hour.update();
+
+  charts.dow.data.datasets[0].data = stats.byDayOfWeek.map(r => r.count);
+  charts.dow.update();
+
+  charts.topUsers.data.labels = stats.topUsers.map(r => r.email.split('@')[0]);
+  charts.topUsers.data.datasets[0].data = stats.topUsers.map(r => r.count);
+  charts.topUsers.update();
+}
+
+function renderKpis(stats){
+  document.getElementById('kpiUsers').textContent = stats.totalUsers;
+  document.getElementById('kpiLogins').textContent = stats.totalLogins;
+  document.getElementById('kpiAvg').textContent = stats.avgLoginsPerUser.toFixed(2);
+  const total = stats.newLogins + stats.returningLogins;
+  const pct = total ? Math.round((stats.newLogins/total)*100) : 0;
+  document.getElementById('kpiRatio').textContent = pct + '% new';
+}
+
+function renderRecent(stats){
+  const body = document.getElementById('recentBody');
+  body.innerHTML = '';
+  stats.recentLogins.forEach(row => {
+    const tr = document.createElement('tr');
+    if (!knownIds.has(row.id)) tr.className = 'new-row';
+    tr.innerHTML = `<td>${row.email}</td><td>${fmtTime(row.login_time)}</td><td>#${row.id}</td>`;
+    body.appendChild(tr);
+  });
+  knownIds = new Set(stats.recentLogins.map(r => r.id));
+}
+
+function showError(msg){
+  const el = document.getElementById('errorBanner');
+  el.style.display = 'block';
+  el.textContent = msg;
+}
+function clearError(){
+  document.getElementById('errorBanner').style.display = 'none';
+}
+
+async function fullRefresh(){
+  const res = await fetch('/api/stats');
+  if (!res.ok) throw new Error('stats endpoint returned ' + res.status);
+  const stats = await res.json();
+  lastFingerprint = stats.fingerprint;
+  if (!charts.trend) initCharts(stats); else updateCharts(stats);
+  renderKpis(stats);
+  renderRecent(stats);
+  document.getElementById('statusLine').textContent =
+    'last updated ' + new Date(stats.generatedAt).toLocaleTimeString();
+}
+
+async function poll(){
+  try {
+    const res = await fetch('/api/heartbeat');
+    if (!res.ok) throw new Error('heartbeat returned ' + res.status);
+    const { fingerprint } = await res.json();
+    clearError();
+    if (fingerprint !== lastFingerprint){
+      await fullRefresh();
+    }
+  } catch(err){
+    showError('Connection issue: ' + err.message + ' — retrying…');
+  } finally {
+    setTimeout(poll, REFRESH_MS);
+  }
+}
+
+fullRefresh().catch(err => showError('Could not load dashboard: ' + err.message));
+setTimeout(poll, REFRESH_MS);
+function togglePIPanel(){
+
+    const panel=document.getElementById("piPanel");
+
+    if(panel.style.display==="block"){
+
+        panel.style.display="none";
+
+    }else{
+
+        panel.style.display="block";
+
+        panel.scrollIntoView({
+
+            behavior:"smooth"
+
+        });
+
+    }
+
+}
+</script>
+</body>
+</html>
