@@ -1,0 +1,166 @@
+.awareness-body {
+  background-color: #0a0a0a;
+  color: #f2f2f2;
+  min-height: 100vh;
+  display: block;
+  padding-bottom: 60px;
+}
+
+.aw-hero {
+  text-align: center;
+  padding: 60px 20px 40px;
+  background: radial-gradient(circle at top, #1a1010 0%, #0a0a0a 70%);
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.aw-logo {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  border-radius: 14px;
+  margin-bottom: 16px;
+}
+
+.aw-hero h1 {
+  color: #e63946;
+  font-size: 32px;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
+.aw-sub {
+  color: #ccc;
+  font-size: 15px;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.aw-user {
+  margin-top: 14px;
+  font-size: 12px;
+  color: #777;
+}
+
+.aw-container {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 40px 24px;
+}
+
+.aw-section {
+  background-color: #141414;
+  border: 1px solid #242424;
+  border-radius: 16px;
+  padding: 32px 30px;
+  margin-bottom: 30px;
+  box-shadow: 0 0 20px rgba(230, 57, 70, 0.06);
+}
+
+.aw-icon {
+  margin-bottom: 10px;
+}
+
+.aw-section h2 {
+  color: #e63946;
+  font-size: 22px;
+  margin-bottom: 16px;
+  letter-spacing: 0.5px;
+}
+
+.aw-section p {
+  line-height: 1.7;
+  color: #d8d8d8;
+  font-size: 15px;
+}
+
+.aw-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 10px;
+}
+
+.aw-card {
+  background-color: #1c1414;
+  border: 1px solid #2e2020;
+  border-radius: 10px;
+  padding: 16px 18px;
+}
+
+.aw-card h3 {
+  color: #ff6b74;
+  font-size: 15px;
+  margin-bottom: 6px;
+}
+
+.aw-card p {
+  font-size: 13.5px;
+  color: #c9c9c9;
+  line-height: 1.5;
+}
+
+.aw-case {
+  border-left: 3px solid #e63946;
+  padding: 8px 0 8px 18px;
+  margin-bottom: 22px;
+}
+
+.aw-case:last-child {
+  margin-bottom: 0;
+}
+
+.aw-case h3 {
+  color: #fff;
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.aw-case p {
+  font-size: 14px;
+  color: #c9c9c9;
+  line-height: 1.7;
+}
+
+.aw-checklist {
+  list-style: none;
+  margin-top: 8px;
+}
+
+.aw-checklist li {
+  position: relative;
+  padding: 10px 0 10px 30px;
+  border-bottom: 1px solid #201818;
+  font-size: 14.5px;
+  color: #d8d8d8;
+}
+
+.aw-checklist li:last-child {
+  border-bottom: none;
+}
+
+.aw-checklist li::before {
+  content: "⚠";
+  position: absolute;
+  left: 0;
+  top: 9px;
+  color: #e63946;
+  font-size: 15px;
+}
+
+.aw-back {
+  display: inline-block;
+  margin-top: 10px;
+  color: #ff8b93;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.aw-back:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+  .aw-hero h1 { font-size: 24px; }
+  .aw-container { padding: 24px 16px; }
+  .aw-section { padding: 24px 18px; }
+}

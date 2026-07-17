@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>TEADY | Phishing Awareness</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='awareness.css') }}">
+</head>
+<body class="awareness-body">
+
+  <header class="aw-hero">
+    <img src="{{ url_for('static', filename='teddy.png') }}" alt="Teady Logo" class="aw-logo">
+    <h1>Phishing Awareness Program</h1>
+    <p class="aw-sub">Learn to recognize, question, and stop phishing attacks — before they cost you.</p>
+    <p class="aw-user">Signed in as {{ email }}</p>
+  </header>
+
+  <main class="aw-container">
+
+    <!-- SECTION 1: WHAT IS PHISHING -->
+    <section class="aw-section">
+      <div class="aw-icon">
+        <svg viewBox="0 0 100 100" width="70" height="70">
+          <rect x="10" y="25" width="80" height="55" rx="6" fill="none" stroke="#e63946" stroke-width="4"/>
+          <path d="M12 28 L50 58 L88 28" fill="none" stroke="#e63946" stroke-width="4"/>
+          <circle cx="78" cy="20" r="14" fill="#e63946"/>
+          <text x="78" y="25" font-size="16" fill="#fff" text-anchor="middle" font-weight="bold">!</text>
+        </svg>
+      </div>
+      <h2>What Is Phishing?</h2>
+      <p>
+        Phishing is a form of social engineering where attackers impersonate a trusted person, brand, or
+        organization to trick someone into revealing sensitive information — passwords, card numbers, OTPs —
+        or into installing malware. Unlike technical hacking, phishing exploits <strong>human trust and urgency</strong>
+        rather than software flaws. It typically arrives through email, text messages, phone calls, or fake
+        websites that closely mimic the real thing.
+      </p>
+    </section>
+
+    <!-- SECTION 2: TYPES -->
+    <section class="aw-section">
+      <div class="aw-icon">
+        <svg viewBox="0 0 100 100" width="70" height="70">
+          <circle cx="50" cy="50" r="42" fill="none" stroke="#e63946" stroke-width="4"/>
+          <path d="M50 20 L50 50 L70 65" stroke="#e63946" stroke-width="4" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h2>Common Types of Phishing</h2>
+      <div class="aw-grid">
+        <div class="aw-card">
+          <h3>Email Phishing</h3>
+          <p>Mass emails impersonating banks, delivery services, or platforms, urging urgent action on a fake link.</p>
+        </div>
+        <div class="aw-card">
+          <h3>Spear Phishing</h3>
+          <p>Highly targeted messages aimed at one specific person, often using personal details to appear credible.</p>
+        </div>
+        <div class="aw-card">
+          <h3>Whaling</h3>
+          <p>Spear phishing aimed at senior executives, often to authorize large wire transfers or leak confidential data.</p>
+        </div>
+        <div class="aw-card">
+          <h3>Smishing</h3>
+          <p>Phishing delivered via SMS text messages, often claiming a package delivery issue or account alert.</p>
+        </div>
+        <div class="aw-card">
+          <h3>Vishing</h3>
+          <p>Voice-call phishing where attackers impersonate support staff, banks, or officials over the phone.</p>
+        </div>
+        <div class="aw-card">
+          <h3>Clone Phishing</h3>
+          <p>A legitimate email that was previously delivered is copied and resent with malicious links swapped in.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: CASE STUDIES -->
+    <section class="aw-section">
+      <div class="aw-icon">
+        <svg viewBox="0 0 100 100" width="70" height="70">
+          <rect x="20" y="15" width="60" height="70" rx="4" fill="none" stroke="#e63946" stroke-width="4"/>
+          <line x1="30" y1="30" x2="70" y2="30" stroke="#e63946" stroke-width="4"/>
+          <line x1="30" y1="45" x2="70" y2="45" stroke="#e63946" stroke-width="4"/>
+          <line x1="30" y1="60" x2="55" y2="60" stroke="#e63946" stroke-width="4"/>
+        </svg>
+      </div>
+      <h2>Real-World Case Studies</h2>
+
+      <div class="aw-case">
+        <h3>Target Corporation — 2013</h3>
+        <p>
+          Attackers first breached a third-party HVAC vendor using a phishing email, then used the vendor's
+          stolen network credentials to move into Target's payment systems. The result was one of the largest
+          retail breaches on record, exposing the payment card details of roughly 40 million customers. It
+          remains a textbook example of how phishing a smaller, less-secure supplier can open the door to a
+          much larger organization.
+        </p>
+      </div>
+
+      <div class="aw-case">
+        <h3>Google & Facebook Invoice Scam — 2013–2015</h3>
+        <p>
+          A Lithuanian man ran a business-email-compromise scheme by impersonating a hardware supplier that
+          both companies genuinely worked with. He sent convincing fake invoices and forged corporate documents,
+          tricking finance staff into wiring more than 100 million dollars combined to accounts he controlled
+          before the scheme was uncovered.
+        </p>
+      </div>
+
+      <div class="aw-case">
+        <h3>Ubiquiti Networks — 2015</h3>
+        <p>
+          Attackers impersonated senior executives and outside legal counsel through spoofed email domains,
+          instructing the finance department to complete confidential, time-sensitive wire transfers. The
+          company transferred over 46 million dollars before recognizing the fraud, later recovering only a
+          portion of the funds.
+        </p>
+      </div>
+
+      <div class="aw-case">
+        <h3>Twitter Verified-Account Breach — 2020</h3>
+        <p>
+          Attackers used phone-based spear phishing (vishing) to trick Twitter employees into revealing internal
+          credentials. This gave them access to internal admin tools, which they used to take over high-profile
+          verified accounts and post a cryptocurrency scam that collected payments from unsuspecting followers
+          within minutes.
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 4: RED FLAGS -->
+    <section class="aw-section">
+      <div class="aw-icon">
+        <svg viewBox="0 0 100 100" width="70" height="70">
+          <path d="M50 10 L90 85 L10 85 Z" fill="none" stroke="#e63946" stroke-width="4" stroke-linejoin="round"/>
+          <line x1="50" y1="38" x2="50" y2="60" stroke="#e63946" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="50" cy="72" r="3.5" fill="#e63946"/>
+        </svg>
+      </div>
+      <h2>Red Flags To Watch For</h2>
+      <ul class="aw-checklist">
+        <li>Urgent or threatening language ("act now", "account will be suspended")</li>
+        <li>Sender address that looks close but not identical to the real domain</li>
+        <li>Generic greetings like "Dear Customer" instead of your actual name</li>
+        <li>Links that don't match the text shown when you hover over them</li>
+        <li>Requests for passwords, OTPs, or payment details over email or text</li>
+        <li>Unexpected attachments, especially .exe, .zip, or macro-enabled files</li>
+        <li>Poor grammar, spelling mistakes, or inconsistent formatting</li>
+        <li>Too-good-to-be-true offers or unexpected prize/refund notifications</li>
+      </ul>
+    </section>
+
+    <!-- SECTION 5: WHAT TO DO -->
+    <section class="aw-section">
+      <div class="aw-icon">
+        <svg viewBox="0 0 100 100" width="70" height="70">
+          <circle cx="50" cy="50" r="42" fill="none" stroke="#e63946" stroke-width="4"/>
+          <path d="M30 52 L45 67 L72 35" fill="none" stroke="#e63946" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <h2>What To Do If You Suspect Phishing</h2>
+      <div class="aw-grid">
+        <div class="aw-card"><h3>1. Don't Click</h3><p>Avoid clicking links or opening attachments in suspicious messages.</p></div>
+        <div class="aw-card"><h3>2. Verify Separately</h3><p>Contact the organization directly using a known number or website, not the one in the message.</p></div>
+        <div class="aw-card"><h3>3. Report It</h3><p>Forward the message to your IT/security team or use your email provider's "Report Phishing" option.</p></div>
+        <div class="aw-card"><h3>4. Change Passwords</h3><p>If you already entered credentials, change that password immediately and enable MFA.</p></div>
+      </div>
+    </section>
+
+    <a class="aw-back" href="{{ url_for('logout') }}">Logout</a>
+
+  </main>
+</body>
+</html>

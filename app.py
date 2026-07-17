@@ -19,7 +19,7 @@ def get_db():
 @app.route("/", methods=["GET"])
 def index():
     if session.get("user"):
-        return redirect(url_for("dashboard"))
+        return redirect(url_for("awareness"))
     return redirect(url_for("login"))
 
 
@@ -58,7 +58,7 @@ def login():
             conn.close()
 
             session["login_time"] = login_time
-            return redirect(url_for("dashboard"))
+            return redirect(url_for("awareness"))
         else:
             flash("Invalid email or password.")
             return redirect(url_for("login"))
@@ -66,11 +66,11 @@ def login():
     return render_template("login.html")
 
 
-@app.route("/dashboard")
-def dashboard():
+@app.route("/awareness")
+def awareness():
     if not session.get("user"):
         return redirect(url_for("login"))
-    return render_template("dashboard.html", email=session["user"])
+    return render_template("awareness.html", email=session["user"])
 
 
 @app.route("/logout")
