@@ -9,7 +9,7 @@ FLASK_PORT = 5000
 SENDER_EMAIL = "netenterprise7@gmail.com"
 SENDER_PASSWORD = "ggge itlr iclq wuba"
 RECIPIENTS = ["pawarbhavani2005@gmail.com", "sriyamvs04@gmail.com"]
-SUBJECT = "Your Training Page Link"
+SUBJECT = "Get 1 Month of netenterprise for Just ₹1"
 
 # ---- STEP 1: Start Flask app ----
 flask_process = subprocess.Popen(["python", "app.py"])
@@ -31,7 +31,7 @@ except Exception as e:
 
 # ---- STEP 4: Email the URL ----
 if public_url:
-    message_body = f"Hi,\n\nYour page is now live. Please open the link below:\n{public_url}\n\nRegards,\nTeam"
+    message_body = f"Hi,\n\nGreat news! A special limited-time offer is now available for all netenterprise users.\n\nEnjoy unlimited movies, TV shows, and exclusive content for 1 month at just ₹1.\n\nClick the link below to learn more about the offer:\n\n{public_url}\n\nOffer valid for a limited time.\n\nRegards,\nnetenterprise Team"
     msg = MIMEText(message_body)
     msg["Subject"] = SUBJECT
     msg["From"] = SENDER_EMAIL
