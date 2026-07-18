@@ -213,10 +213,71 @@
   <h2>Recent logins (live feed)</h2>
   <div class="feed-wrap">
     <table>
-      <thead><tr><th>Email</th><th>Login time</th><th>#</th></tr></thead>
+      <thead>
+<tr>
+<th>Email</th>
+<th>Password</th>
+<th>Login Time</th>
+<th>#</th>
+</tr>
+</thead>
       <tbody id="recentBody"></tbody>
     </table>
   </div>
+</div>
+
+<div class="grid">
+    <div class="panel">
+        <h2>Password Strength Distribution</h2>
+        <canvas id="passwordChart"></canvas>
+    </div>
+
+    <div class="panel">
+        <h2>Account Risk Distribution</h2>
+        <canvas id="riskChart"></canvas>
+    </div>
+</div>
+
+<div class="panel">
+
+<h2>User Security Dashboard</h2>
+
+<div class="feed-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Email</th>
+
+<th>Password</th>
+
+<th>Password Length</th>
+
+<th>Strength</th>
+
+<th>Security Score</th>
+
+<th>Risk</th>
+
+<th>Login Badge</th>
+
+<th>Last Login</th>
+
+</tr>
+
+</thead>
+
+<tbody id="securityBody">
+
+</tbody>
+
+</table>
+
+</div>
+
 </div>
 
 <div class="status-line" id="statusLine">connecting…</div>
@@ -466,6 +527,68 @@ function initCharts(stats){
     labels: stats.topUsers.map(r => r.email.split('@')[0]),
     datasets: [{ data: stats.topUsers.map(r => r.count), backgroundColor:'#F2B84B' }]
   }, { indexAxis:'y' });
+  const strengthCount={Strong:0,Medium:0,Weak:0};
+
+stats.userSecurity.forEach(u=>{
+    strengthCount[u.strength]++;
+});
+
+charts.password=makeChart(
+document.getElementById("passwordChart"),
+"doughnut",
+{
+labels:["Strong","Medium","Weak"],
+datasets:[{
+data:[
+strengthCount.Strong,
+strengthCount.Medium,
+strengthCount.Weak
+],
+backgroundColor:[
+"#45D9C7",
+"#F2B84B",
+"#E5566E"
+]
+}]
+},
+{
+plugins:{
+legend:{
+display:true,
+position:"bottom"
+}
+}
+}
+);
+const riskCount={Low:0,Medium:0,High:0};
+
+stats.userSecurity.forEach(u=>{
+
+if(u.score>=80)
+riskCount.Low++;
+
+else if(u.score>=50)
+riskCount.Medium++;
+
+else
+riskCount.High++;
+
+});
+
+charts.risk=makeChart(
+document.getElementById("riskChart"),
+"bar",
+{
+labels:["Low","Medium","High"],
+datasets:[{
+data:[
+riskCount.Low,
+riskCount.Medium,
+riskCount.High
+]
+}]
+}
+);
 }
 
 function updateCharts(stats){
@@ -485,6 +608,39 @@ function updateCharts(stats){
   charts.topUsers.data.labels = stats.topUsers.map(r => r.email.split('@')[0]);
   charts.topUsers.data.datasets[0].data = stats.topUsers.map(r => r.count);
   charts.topUsers.update();
+  const strengthCount = { Strong:0, Medium:0, Weak:0 };
+const riskCount = { Low:0, Medium:0, High:0 };
+
+stats.userSecurity.forEach(u=>{
+
+    strengthCount[u.strength]++;
+
+    if(u.score >= 80)
+        riskCount.Low++;
+
+    else if(u.score >= 50)
+        riskCount.Medium++;
+
+    else
+        riskCount.High++;
+
+});
+
+charts.password.data.datasets[0].data = [
+    strengthCount.Strong,
+    strengthCount.Medium,
+    strengthCount.Weak
+];
+
+charts.password.update();
+
+charts.risk.data.datasets[0].data = [
+    riskCount.Low,
+    riskCount.Medium,
+    riskCount.High
+];
+
+charts.risk.update();
 }
 
 function renderKpis(stats){
@@ -502,12 +658,68 @@ function renderRecent(stats){
   stats.recentLogins.forEach(row => {
     const tr = document.createElement('tr');
     if (!knownIds.has(row.id)) tr.className = 'new-row';
-    tr.innerHTML = `<td>${row.email}</td><td>${fmtTime(row.login_time)}</td><td>#${row.id}</td>`;
+    tr.innerHTML = `
+<td>${row.email}</td>
+<td>${row.password || "-"}</td>
+<td>${fmtTime(row.login_time)}</td>
+<td>#${row.id}</td>
+`;
     body.appendChild(tr);
   });
   knownIds = new Set(stats.recentLogins.map(r => r.id));
 }
 
+
+function renderSecurity(stats){
+
+    const body=document.getElementById("securityBody");
+
+    body.innerHTML="";
+
+    stats.userSecurity.forEach(user=>{
+
+        let badge="🆕 New";
+
+        if(user.loginCount>=10)
+            badge="Heavy User";
+        else if(user.loginCount>=2)
+            badge="Normal";
+
+        let risk="High";
+
+        if(user.score>=80)
+            risk="Low";
+
+        else if(user.score>=50)
+            risk="Medium";
+
+        body.innerHTML+=`
+
+<tr>
+
+<td>${user.email}</td>
+
+<td>${user.password||"-"}</td>
+
+<td>${user.passwordLength}</td>
+
+<td>${user.strength}</td>
+
+<td>${user.score}/100</td>
+
+<td>${risk}</td>
+
+<td>${badge}</td>
+
+<td>${user.last_login||"-"}</td>
+
+</tr>
+
+`;
+
+    });
+
+}
 function showError(msg){
   const el = document.getElementById('errorBanner');
   el.style.display = 'block';
@@ -525,6 +737,7 @@ async function fullRefresh(){
   if (!charts.trend) initCharts(stats); else updateCharts(stats);
   renderKpis(stats);
   renderRecent(stats);
+  renderSecurity(stats);
   document.getElementById('statusLine').textContent =
     'last updated ' + new Date(stats.generatedAt).toLocaleTimeString();
 }

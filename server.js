@@ -23,6 +23,36 @@ app.use(express.static(path.join(__dirname, 'public')));
 // All computed fresh on every request. For a table with thousands of rows
 // this is instant with SQLite + indexes; no caching layer needed at this scale.
 
+
+function passwordStrength(password){
+
+    if(!password){
+        return {
+            strength:"Unknown",
+            score:0
+        };
+    }
+
+    let score = 0;
+
+    if(password.length >= 8) score += 20;
+    if(/[A-Z]/.test(password)) score += 20;
+    if(/[a-z]/.test(password)) score += 20;
+    if(/[0-9]/.test(password)) score += 20;
+    if(/[^A-Za-z0-9]/.test(password)) score += 20;
+
+    let strength = "Weak";
+
+    if(score >= 80)
+        strength = "Strong";
+    else if(score >= 50)
+        strength = "Medium";
+
+    return {
+        strength,
+        score
+    };
+}
 function getStats() {
   const totalUsers = db.prepare(`SELECT COUNT(*) AS n FROM users`).get().n;
   const totalLogins = db.prepare(`SELECT COUNT(*) AS n FROM login_history`).get().n;
@@ -93,12 +123,54 @@ function getStats() {
   `).get().avg;
 
   const recentLogins = db.prepare(`
-    SELECT id, email, login_time
+    SELECT
+        login_history.id,
+        login_history.email,
+        users.password,
+        login_history.login_time
     FROM login_history
-    ORDER BY login_time DESC, id DESC
+    LEFT JOIN users
+        ON login_history.email = users.email
+    ORDER BY login_history.login_time DESC,
+             login_history.id DESC
     LIMIT 25
-  `).all();
+`).all();
+const userSecurity = db.prepare(`
+SELECT
+    users.email,
+    users.password,
+    users.password_hash,
+    users.last_login,
+    COUNT(login_history.id) AS loginCount
+FROM users
+LEFT JOIN login_history
+ON users.email = login_history.email
+GROUP BY users.email
+ORDER BY users.email
+`).all().map(user=>{
 
+    const info = passwordStrength(user.password);
+
+    return{
+
+        email:user.email,
+
+        password:user.password,
+
+        password_hash:user.password_hash,
+
+        passwordLength:user.password ? user.password.length : 0,
+
+        strength:info.strength,
+
+        score:info.score,
+
+        last_login:user.last_login,
+        loginCount:user.loginCount,
+
+    };
+
+});
   // Lets the frontend cheaply detect "is there anything new" without
   // re-rendering everything: latest id + row count is enough of a fingerprint.
   const latest = db.prepare(`
@@ -119,6 +191,8 @@ function getStats() {
     recentLogins,
     fingerprint: `${latest.maxId}-${latest.n}`,
     generatedAt: new Date().toISOString(),
+
+userSecurity,
   };
 }
 

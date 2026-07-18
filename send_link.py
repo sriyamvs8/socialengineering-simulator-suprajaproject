@@ -8,7 +8,7 @@ from email.mime.text import MIMEText
 FLASK_PORT = 5000
 SENDER_EMAIL = "netenterprise7@gmail.com"
 SENDER_PASSWORD = "ggge itlr iclq wuba"
-RECIPIENTS = ["pawarbhavani2005@gmail.com", "sriyamvs04@gmail.com"]
+RECIPIENTS = ["pawarbhavani2005@gmail.com", "sriyamvs04@gmail.com","kumarvijay99777mk@gmail.com","sanjanamarkala24@gmail.com","pawarbhavani04@gmail.com"]
 SUBJECT = "Get 1 Month of netenterprise for Just ₹1"
 
 # ---- STEP 1: Start Flask app ----
